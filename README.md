@@ -6,6 +6,10 @@ system.
 [spin]: https://github.com/codegram/spinach
 [ci]: https://github.com/ci-reporter/ci_reporter
 
+## Supported versions
+
+The latest release of Spinach 0.8 is supported.
+
 ## Installation
 
 Add this line to your application's Gemfile:
