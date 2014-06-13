@@ -3,6 +3,10 @@
 Connects [Spinach][spin] to [CI::Reporter][ci], and then to your CI
 system.
 
+[![Gem Version](https://badge.fury.io/rb/ci_reporter_spinach.svg)](http://badge.fury.io/rb/ci_reporter_spinach)
+[![Build Status](https://travis-ci.org/ci-reporter/ci_reporter_spinach.svg?branch=master)](https://travis-ci.org/ci-reporter/ci_reporter_spinach)
+[![Code Climate](https://codeclimate.com/github/ci-reporter/ci_reporter_spinach.png)](https://codeclimate.com/github/ci-reporter/ci_reporter_spinach)
+
 [spin]: https://github.com/codegram/spinach
 [ci]: https://github.com/ci-reporter/ci_reporter
 
