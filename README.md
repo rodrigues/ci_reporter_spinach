@@ -5,6 +5,7 @@ system.
 
 [![Gem Version](https://badge.fury.io/rb/ci_reporter_spinach.svg)](http://badge.fury.io/rb/ci_reporter_spinach)
 [![Build Status](https://travis-ci.org/ci-reporter/ci_reporter_spinach.svg?branch=master)](https://travis-ci.org/ci-reporter/ci_reporter_spinach)
+[![Dependency Status](https://gemnasium.com/ci-reporter/ci_reporter_spinach.svg)](https://gemnasium.com/ci-reporter/ci_reporter_spinach)
 [![Code Climate](https://codeclimate.com/github/ci-reporter/ci_reporter_spinach.png)](https://codeclimate.com/github/ci-reporter/ci_reporter_spinach)
 
 [spin]: https://github.com/codegram/spinach
