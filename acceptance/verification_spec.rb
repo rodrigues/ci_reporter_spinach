@@ -30,13 +30,13 @@ describe "Spinach acceptance" do
     end
 
     it "should have one failure for missing steps" do
-      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Missing steps']/failure")
+      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Missing steps']/error")
       failures.size.should == 1
       failures.first.attributes["type"].should =~ /StepNotDefinedException/
     end
 
     it "should have one failure for the bad coder" do
-      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Bad coder']/failure")
+      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Bad coder']/error")
       failures.size.should == 1
       failures.first.attributes["type"].should == "RuntimeError"
     end
