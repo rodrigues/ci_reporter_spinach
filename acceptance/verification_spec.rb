@@ -1,44 +1,73 @@
 require 'rexml/document'
+require 'ci/reporter/test_utils/accessor'
+require 'ci/reporter/test_utils/shared_examples'
+require 'rspec/collection_matchers'
 
 REPORTS_DIR = File.dirname(__FILE__) + '/reports'
 
 describe "Spinach acceptance" do
-  it "should generate one XML file" do
-    File.exist?(File.join(REPORTS_DIR, 'FEATURES-Example-Spinach-feature.xml')).should == true
+  include CI::Reporter::TestUtils::SharedExamples
+  Accessor = CI::Reporter::TestUtils::Accessor
 
-    Dir["#{REPORTS_DIR}/FEATURES-*Spinach*.xml"].length.should == 1
-  end
+  let(:report_path) { File.join(REPORTS_DIR, 'FEATURES-Example-Spinach-feature.xml') }
 
-  context "SPINACH report file" do
-    before :each do
-      @doc = File.open(File.join(REPORTS_DIR, 'FEATURES-Example-Spinach-feature.xml')) do |f|
-        REXML::Document.new(f)
+  context "the feature" do
+    subject(:result) { Accessor.new(load_xml_result(report_path)) }
+
+    it { is_expected.to have(2).errors }
+    it { is_expected.to have(1).failures }
+    it { is_expected.to have(4).testcases }
+
+    it_behaves_like "a report with consistent attribute counts"
+    it_behaves_like "assertions are not tracked"
+    it_behaves_like "nothing was output"
+
+    describe "the test the lazy hacker wrote" do
+      subject(:testcase) { result.testcase('Lazy hacker') }
+
+      it { is_expected.to have(1).failures }
+
+      describe "the failure" do
+        subject(:failure) { testcase.failures.first }
+
+        it "has a type" do
+          expect(failure.type).to match /ExpectationNotMetError/
+        end
       end
     end
 
-    it "should have three tests and two failures" do
-      @doc.root.attributes["errors"].should == "2"
-      @doc.root.attributes["failures"].should == "1"
-      @doc.root.attributes["tests"].should == "4"
-      @doc.root.elements.to_a("/testsuite/testcase").size.should == 4
+    describe "the test with missing steps" do
+      subject(:testcase) { result.testcase('Missing steps') }
+
+      it { is_expected.to have(1).errors }
+
+      describe "the failure" do
+        subject(:failure) { testcase.errors.first }
+
+        it "has a type" do
+          expect(failure.type).to match /StepNotDefinedException/
+        end
+      end
     end
 
-    it "should have one failure for the lazy hacker" do
-      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Lazy hacker']/failure")
-      failures.size.should == 1
-      failures.first.attributes["type"].should =~ /ExpectationNotMetError/
-    end
+    describe "the test the bad coder wrote" do
+      subject(:testcase) { result.testcase('Bad coder') }
 
-    it "should have one failure for missing steps" do
-      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Missing steps']/error")
-      failures.size.should == 1
-      failures.first.attributes["type"].should =~ /StepNotDefinedException/
-    end
+      it { is_expected.to have(1).errors }
 
-    it "should have one failure for the bad coder" do
-      failures = @doc.root.elements.to_a("/testsuite/testcase[@name='Bad coder']/error")
-      failures.size.should == 1
-      failures.first.attributes["type"].should == "RuntimeError"
+      describe "the failure" do
+        subject(:failure) { testcase.errors.first }
+
+        it "has a type" do
+          expect(failure.type).to match /RuntimeError/
+        end
+      end
+    end
+  end
+
+  def load_xml_result(path)
+    File.open(path) do |f|
+      REXML::Document.new(f)
     end
   end
 end
