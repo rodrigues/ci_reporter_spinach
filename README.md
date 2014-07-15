@@ -32,7 +32,7 @@ $ bundle
 ## Usage
 
 Require the reporter in your Rakefile, and ensure that
-`ci:setup:spinach` is a dependency of your RSpec task.
+`ci:setup:spinach` is a dependency of your Spinach task.
 
 Unlike other CI::Reporter gems, you must **also** explictly tell
 Spinach to use the reporter!
