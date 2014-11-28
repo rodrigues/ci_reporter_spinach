@@ -7,31 +7,45 @@ module CI
     class Spinach < ::Spinach::Reporter
       include SpinachVersion
 
+      attr_reader :out, :error
+
       def initialize(options = nil)
         @options = options
+        @out = options[:output] || $stdout
+        @error = options[:error] || $stdout
         @report_manager = ReportManager.new('features')
       end
 
       def before_feature_run(feature)
-        @test_suite = TestSuite.new(feature.is_a?(Hash) ? feature['name'] : feature.name)
+        name = feature.is_a?(Hash) ? feature['name'] : feature.name
+        out.puts "Feature: #{name}"
+        @test_suite = TestSuite.new(name)
         @test_suite.start
       end
 
       def before_scenario_run(scenario, step_definitions = nil)
-        @test_case = TestCase.new(scenario.is_a?(Hash) ? scenario['name'] : scenario.name)
+        name = scenario.is_a?(Hash) ? scenario['name'] : scenario.name
+        out.puts "Scenario: #{name}"
+        @test_case = TestCase.new(name)
         @test_case.start
       end
 
       def on_undefined_step(step, failure, step_definitions = nil)
-        @test_case.failures << SpinachFailure.new(:error, step, failure, nil)
+        failure = SpinachFailure.new(:error, step, failure, nil)
+        error.puts failure.to_s
+        @test_case.failures << failure
       end
 
       def on_failed_step(step, failure, step_location, step_definitions = nil)
-        @test_case.failures << SpinachFailure.new(:failed, step, failure, step_location)
+        failure = SpinachFailure.new(:failed, step, failure, step_location)
+        error.puts failure.to_s
+        @test_case.failures << failure
       end
 
       def on_error_step(step, failure, step_location, step_definitions = nil)
-        @test_case.failures << SpinachFailure.new(:error, step, failure, step_location)
+        failure = SpinachFailure.new(:error, step, failure, step_location)
+        error.puts failure.to_s
+        @test_case.failures << failure
       end
 
       def after_scenario_run(scenario, step_definitions = nil)
@@ -73,6 +87,10 @@ module CI
 
       def location
         @failure.backtrace.join("\n")
+      end
+
+      def to_s
+        "#{@type} #{@step.name} #{@step.keyword} #{@failure.message} #{@failure.backtrace}"
       end
     end
   end
