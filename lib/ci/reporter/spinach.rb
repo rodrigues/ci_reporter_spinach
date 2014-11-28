@@ -33,7 +33,7 @@ module CI
       end
 
       def on_successful_step(step, step_location, step_definitions = nil)
-        out.puts "✔ #{step.keyword} #{step.name}"
+        out.puts "(+) #{step.keyword} #{step.name}"
       end
 
       def on_undefined_step(step, failure, step_definitions = nil)
@@ -96,7 +96,7 @@ module CI
       end
 
       def to_s
-        "✘ #{@step.keyword} #{@step.name}\n#{@type}\n#{@failure.message}\n#{location}"
+        "(x) #{@step.keyword} #{@step.name}\n#{@type}\n#{@failure.message}\n#{location}"
       end
     end
   end
