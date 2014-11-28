@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'ci/reporter/core'
 require 'ci/reporter/spinach/version'
 require 'spinach'
@@ -18,6 +19,7 @@ module CI
 
       def before_feature_run(feature)
         name = feature.is_a?(Hash) ? feature['name'] : feature.name
+        out.puts "================"
         out.puts "Feature: #{name}"
         @test_suite = TestSuite.new(name)
         @test_suite.start
@@ -28,6 +30,10 @@ module CI
         out.puts "Scenario: #{name}"
         @test_case = TestCase.new(name)
         @test_case.start
+      end
+
+      def on_successful_step(step, step_location, step_definitions = nil)
+        out.puts "✔ #{step.keyword} #{step.name}"
       end
 
       def on_undefined_step(step, failure, step_definitions = nil)
@@ -90,7 +96,7 @@ module CI
       end
 
       def to_s
-        "#{@type} #{@step.name} #{@step.keyword} #{@failure.message} #{@failure.backtrace}"
+        "✘ #{@step.keyword} #{@step.name}\n#{@type}\n#{@failure.message}\n#{location}"
       end
     end
   end
